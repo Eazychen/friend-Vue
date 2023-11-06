@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    
+    <div id="app">
+        <div class="container">
+            <div class="my-3">
+                <button type="button" @click="status = !status" class="btn btn-outline-primary">
+                    切換照片
+                </button>
+                <span v-if="status">現在照片：清晰</span>
+                <span v-else="status">現在照片：模糊</span>
+            </div>
+            <div class="row">
+                <div v-for="(item, index) in data" :key="index" class="col-md-4 mb-1">
+                    <div class="card">
+                        <div class="position-absolute" style="top: 420px; right: 5px;">
+                            <button type="button" @click="item.favorite = !item.favorite" class="btn btn-outline-danger rounded-pill">
+                                <i v-if="!item.favorite" class="bi bi-heart"></i>
+                                <i v-else class="bi bi-heart-fill"></i>
+                            </button>
+                        </div>
+                        <img v-if="status" :src="item.picture.large" class="card-img-top" alt="...">
+                        <img v-else="status" :src="item.picture.thumbnail" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">{{item.name.title}} {{item.name.first}} {{item.name.last}}</h5>
+                            <p v-if = "item.gender === 'male' ">Gender:男性<i class="bi bi-gender-male"></i></p>
+					        <p v-else-if = "item.gender === 'female' ">Gender:女性<i class="bi bi-gender-female"></i></p>
+                            <p class="card-text">Email:<a :href=`mailto:${item.email}`>{{item.email}}</a></p>
+                            <p class="card-text">Phone:<a :href=`tel:${item.phone}`>{{item.phone}}</a></p>
+                            <p class="card-text">Cell:<a :href=`cell:${item.cell}`>{{item.cell}}</a></p>
+                            <p class="card-text">Address:
+                                <a :href=`https://www.google.com/maps/search/${item.location.city}${item.location.country}${item.location.country}${item.location.postcode}`>{{item.location.city}} {{item.location.country}} {{item.location.country}} {{item.location.postcode}}</a>
+                                <iframe :src=`https://www.google.com/maps?q=${item.location.coordinates.latitude},${item.location.coordinates.longitude}&output=embed&z=7` width="350" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </p>
+                            <p class="card-text" >dob:{{shortBob(item.dob.date)}}</p>
+                            <p class="card-text">registered:{{item.registered.date}}</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script type="module">
+    import{ createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.esm-browser.min.js'
+    const app = createApp({
+        data(){
+            return {
+            text:'我是123',
+            data: [],
+            status: true,
+            }
+        },
+        methods: {
+            shortBob(bir){
+                return bir.substring(0,10);
+            },
+            fetchData(){
+            const url = 'https://randomuser.me/api/?results=10';
+            fetch(url)
+            .then(function (response) {
+                return response.json();
+            })
+            .then((getData) => {
+                this.data = getData.results;
+            })
+            },
+
+            // 用axios的方法
+            getRandomUser(){
+                axios('https://randomuser.me/api/?results=10')
+                .then((res) => {
+                this.data = res.data.results
+                })
+            }
+        },
+        mounted() {
+            this.getRandomUser();
+        },
+
+    })
+    app.mount("#app");
+</script>
+    
+    
+</body>
+</html>
